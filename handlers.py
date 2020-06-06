@@ -16,7 +16,6 @@ def talk_to_me(update, context):
     context.user_data['emoji'] = get_smile(context.user_data)
     text = update.message.text
     print(text)
-    my_keyboard = ReplyKeyboardMarkup([['Прислать котика']])
     update.message.reply_text(f"{text} {context.user_data['emoji']}", reply_markup=main_keyboard())
 
 def guess_number(update, context):
