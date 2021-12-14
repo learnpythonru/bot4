@@ -2,7 +2,7 @@ from glob import glob
 import os
 from random import choice
 
-from utils import get_smile, is_cat, main_keyboard, play_random_numbers
+from utils import get_smile, main_keyboard, play_random_numbers, has_object_on_image
 
 def greet_user(update, context):
     print("Вызван /start")
@@ -45,15 +45,16 @@ def user_coordinates(update, context):
     )
 
 def check_user_photo(update, context):
-    update.message.reply_text("Обрабатываем фотографию")
-    os.makedirs("downloads", exist_ok=True)
-    user_photo = context.bot.getFile(update.message.photo[-1].file_id)
-    file_name = os.path.join("downloads", f"{user_photo.file_id}.jpg")
-    user_photo.download(file_name)
-    if is_cat(file_name):
-        update.message.reply_text("Обнаружен котик, добавляю в библиотеку")
-        new_filename = os.path.join("images", f"cat_{user_photo.file_id}.jpg")
-        os.rename(file_name, new_filename)
+    update.message.reply_text('Обрабатываем фото')
+    os.makedirs('downloads', exist_ok=True)
+    photo_file = context.bot.getFile(update.message.photo[-1].file_id)
+    file_name = os.path.join('downloads', f'{update.message.photo[-1].file_id}.jpg')
+    photo_file.download(file_name)
+    update.message.reply_text('Файл сохранен')
+    if has_object_on_image(file_name, 'cat'):
+        update.message.reply_text('Обнаружен котик, сохраняю в библиотеку')
+        new_file_name = os.path.join('images',  f'cat_{photo_file.file_id}.jpg')
+        os.rename(file_name, new_file_name)
     else:
-        update.message.reply_text("Тревога, котик на фото не обнаружен")
         os.remove(file_name)
+        update.message.reply_text('Тревога, котик не обнаружен!')
